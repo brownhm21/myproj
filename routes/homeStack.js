@@ -16,7 +16,7 @@ const screens = {
     Cart :{
         screen: Cart,
     },
-    HomeScreen: {
+    Home: {
         screen: Home,
     }
    
