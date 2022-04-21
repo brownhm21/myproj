@@ -4,13 +4,45 @@ import { BarCodeScanner } from 'expo-barcode-scanner';
 
 
 
+
 export default function Home({navigation}){
 
   
 
   const [hasPermission, setHasPermission] = useState(null);
   const [scanned, setScanned] = useState(false);
-  const [text, setText] = useState('Not yet scanned')
+  const [price, setPrice] = useState(0);
+  const [name, setName] = useState('');
+  const [category, setCategory] = useState('');
+  const [qty, setQty] = useState(0); 
+  const [text, setText] = useState('Not yet scanned');
+  const [product,setProduct] = useState(null);
+
+
+  const findProduct = async (text) => {
+    // Build formData object.
+    let formData = new FormData();
+    formData.append('FindProduct', text);
+    
+    const response = await fetch('http://192.168.1.144/api/Search.php', {
+    method: "POST",
+    body: formData,
+    });
+    
+    const data = await response.json();
+    console.log(data);
+    setProduct(data);
+
+    if(data&&data.length>0){
+      setName(data[0].prodname)
+      setCategory(data[0].category)
+      setPrice(data[0].price)
+      setQty(data[0].qty)
+      
+    }
+
+    }
+  
 
   const askForCameraPermission = () => {
     (async () => {
@@ -26,10 +58,10 @@ export default function Home({navigation}){
 
   // What happens when we scan the bar code
   const handleBarCodeScanned = ({ type, data }) => {
-    setScanned(true);
-    setText(data)
-    console.log('Type: ' + type + '\nData: ' + data)
-  };
+setScanned(true);
+setText(data);
+findProduct(data);
+};
 
   // Check permissions and return the screens
   if (hasPermission === null) {
@@ -74,6 +106,15 @@ export default function Home({navigation}){
 
       {scanned && <Button title={'Scan again?'} onPress={() => setScanned(false)} color='tomato' />}
       <Button title={'Add to Cart'} onPress={() => setScanned(false)} color='green' />
+      
+
+      <View style={styles.shadowProp}>
+      <Text style={styles.shadowPropp}>Name: {name}{'\n'}category: {category}{'\n'}Price: {price}${'\n'}qty: {qty}</Text>
+
+      </View>
+      
+    
+
       <View style={styles.loginButtonSection}>
                   <Pressable
                     style={styles.loginButton} 
@@ -138,7 +179,7 @@ fontSize: 20,
 loginButtonSection: {
   width: '100%',
   // height: '30%',
-  marginTop: 30,
+  //marginTop: 30,
   justifyContent: 'center',
   alignItems: 'center'
 },
@@ -150,7 +191,18 @@ loginButton: {
   alignItems: 'center',  //r & l
   width: '70%',
   borderRadius: 100,
-  marginBottom:-140,
+  marginBottom:-20,
+
+},
+shadowPropp: {
+  fontSize: 25,
+  margin: 20,
+  color: 'white',
+   marginTop: 2,
+   justifyContent: 'center',
+   alignItems: 'center'
+
+  
 
 },
 text: {
