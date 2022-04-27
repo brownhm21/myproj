@@ -1,27 +1,41 @@
 import React, { useState, useEffect } from 'react';
-import { View, Pressable, Text, TextInput, TouchableOpacity, Button, ImageBackground, Image, StatusBar, StyleSheet } from 'react-native';
+import { View, Pressable, Text, TextInput, TouchableOpacity, Button, ImageBackground, Image, StatusBar, StyleSheet, AsyncStorage } from 'react-native';
 import { BarCodeScanner } from 'expo-barcode-scanner';
+import { useCount } from '../../core/cart';
 
 
 
 
-export default function Home({navigation}){
+export default function Home({navigation},props){
 
   
 
+  
   const [hasPermission, setHasPermission] = useState(null);
   const [scanned, setScanned] = useState(false);
   const [price, setPrice] = useState(0);
   const [name, setName] = useState('');
   const [category, setCategory] = useState('');
+  const [pic, setPic] = useState('');
+  const [id, setId] = useState(0);
   const [qty, setQty] = useState(0); 
   const [text, setText] = useState('Not yet scanned');
   const [product,setProduct] = useState(null);
+  //const cart = useCount(state => state.cart);
+  //const addItem = useCount(state => state.addItem);
+  const [shoppingBag, setShoppingBag] = useState([]);
+  //const [shoppingBig, setShoppingBig] = useState([]);
+  const cartarray = []  ;
+
+
 
 
   const findProduct = async (text) => {
     // Build formData object.
+    
+    console.log(name);
     let formData = new FormData();
+  
     formData.append('FindProduct', text);
     
     const response = await fetch('http://192.168.1.144/api/Search.php', {
@@ -32,17 +46,38 @@ export default function Home({navigation}){
     const data = await response.json();
     console.log(data);
     setProduct(data);
+    //addItem(data);
 
     if(data&&data.length>0){
       setName(data[0].prodname)
       setCategory(data[0].category)
       setPrice(data[0].price)
       setQty(data[0].qty)
+      setPic(data[0].pic)
+
+      cartarray.push(data)
+      
+     
+      console.log('new cart:>>', cartarray)
+      
+      setShoppingBag(cartarray)
+
+      
+      //console.log('fresh bag', shoppingBag)
       
     }
+    
+
+    
+    
+    //setShoppingBig(setShoppingBag)
+    //console.log('all content', shoppingBig);
 
     }
-  
+
+
+
+
 
   const askForCameraPermission = () => {
     (async () => {
@@ -77,11 +112,31 @@ findProduct(data);
         <Button title={'Allow Camera'} onPress={() => askForCameraPermission()} />
       </View>)
   }
+  const saveData = async(shoppingBag) => {
+    console.log('just checking:  ', cartarray.push(shoppingBag))
+
+    try {
+      let items = []
+    items = (await AsyncStorage.getItem('items')) || '[]';
+    items = JSON.parse(items);
+    items.push(shoppingBag);
+        await AsyncStorage.setItem('items', JSON.stringify(items))
+        .then(() => console.log('saved cart'))
+    } catch (error) {
+        console.log(error)
+    }
+};
+
+
 
   // Return the View
   return (
-    <View style={styles.container}>
 
+
+    <ImageBackground source={require('../../assets/pic1.jpg')} style={styles.background}>
+    <View style={styles.container}>
+      
+  
 
 
        <View style={styles.containerr}>
@@ -100,12 +155,19 @@ findProduct(data);
       <View style={styles.barcodebox}>
         <BarCodeScanner
           onBarCodeScanned={scanned ? undefined : handleBarCodeScanned}
-          style={{ height: 300, width: 200 }} />
+          style={{ height: 500, width: 300 }} />
       </View>
       <Text style={styles.maintext}>{text}</Text>
 
       {scanned && <Button title={'Scan again?'} onPress={() => setScanned(false)} color='tomato' />}
-      <Button title={'Add to Cart'} onPress={() => setScanned(false)} color='green' />
+      
+      <TouchableOpacity ><Text>{'\n'}</Text></TouchableOpacity>
+      <Button title={'Add to Cart'} onPress={() => {
+        //addItem(shoppingBag); 
+        
+       saveData(shoppingBag)
+         ;}} color='green' />
+
       
 
       <View style={styles.shadowProp}>
@@ -120,6 +182,7 @@ findProduct(data);
                     style={styles.loginButton} 
                     onPress={()=>{
                       navigation.navigate("Cart");
+
                     }}
                     >
                       <Text 
@@ -128,19 +191,27 @@ findProduct(data);
                     </Pressable>
                   </View>
 
-      
+                  
     </View>
+    </ImageBackground>
   );
 }
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#163b37',
+    //backgroundColor: '#163b37',
     alignItems: 'center',
     justifyContent: 'center',
     
   },
+  background: {
+    flex: 1,
+    resizeMode: 'cover', 
+    justifyContent: 'center',
+
+
+   },
   maintext: {
     fontSize: 16,
     margin: 20,
@@ -157,7 +228,7 @@ const styles = StyleSheet.create({
 stretch: {
  width:100,
  height:100,
- marginTop: -100,
+ marginTop: -70,
 
 },
 
@@ -191,14 +262,14 @@ loginButton: {
   alignItems: 'center',  //r & l
   width: '70%',
   borderRadius: 100,
-  marginBottom:-20,
+  marginBottom:-50,
 
 },
 shadowPropp: {
   fontSize: 25,
   margin: 20,
   color: 'white',
-   marginTop: 2,
+   marginTop: 10,
    justifyContent: 'center',
    alignItems: 'center'
 
@@ -228,8 +299,8 @@ fontWeight: 'bold',
   barcodebox: {
     alignItems: 'center',
     justifyContent: 'center',
-    height: 200,
-    width: 200,
+    height: 70,
+    width: 300,
     overflow: 'hidden',
     borderRadius: 30,
     backgroundColor: 'tomato'
