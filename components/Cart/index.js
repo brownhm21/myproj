@@ -59,12 +59,7 @@ import {
 	return (
 	  <View style={styles.item}>
 		<View style={styles.avatarcon}>
-		  <Image
-			source={{
-			  uri: "https://www.pexels.com/photo/pancake-with-honey-on-plate-357573/",
-			}}
-			style={styles.avatar}
-		  />
+		<Image source={item.pic}  style ={styles.avatar}/>
 		</View>
 		<View style={styles.txt}>
 		  <Text style={styles.texto}>{item.prodname}</Text>
