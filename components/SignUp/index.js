@@ -40,7 +40,7 @@ export default class signup extends Component {
     
     
     else{
-      var InsertAPIURL = "http://192.168.1.144/api/SignIn.php";   //API to render signup
+      var InsertAPIURL = "http://192.168.3.106/api/SignIn.php";   //API to render signup
 
       var headers = {
         'Accept': 'application/json',

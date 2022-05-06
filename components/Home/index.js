@@ -6,7 +6,7 @@ import { useCount } from '../../core/cart';
 
 
 
-export default function Home({navigation},props){
+export default function Home({navigation}){
 
   
 
@@ -25,8 +25,8 @@ export default function Home({navigation},props){
   //const addItem = useCount(state => state.addItem);
   const [shoppingBag, setShoppingBag] = useState([]);
   //const [shoppingBig, setShoppingBig] = useState([]);
-  const cartarray = []  ;
-
+  const [cartarray,setCartarray] = useState([]);
+  //let cartarray=[];
 
 
 
@@ -38,13 +38,13 @@ export default function Home({navigation},props){
   
     formData.append('FindProduct', text);
     
-    const response = await fetch('http://192.168.1.144/api/Search.php', {
+    const response = await fetch('http://192.168.3.108/api/Search.php', {
     method: "POST",
     body: formData,
     });
     
     const data = await response.json();
-    console.log(data);
+    //console.log(data);
     setProduct(data);
     //addItem(data);
 
@@ -54,31 +54,25 @@ export default function Home({navigation},props){
       setPrice(data[0].price)
       setQty(data[0].qty)
       setPic(data[0].pic)
+      //console.log('fresh bag', shoppingBag)
 
       cartarray.push(data)
       
+      //ShoppingBag.push(cartarray)
+
+    }
+
+     //cartarray.push(ShoppingBag)
      
-      console.log('new cart:>>', cartarray)
+      //console.log('new cart:>>', cartarray)
       
       setShoppingBag(cartarray)
-
-      
-      //console.log('fresh bag', shoppingBag)
-      
-    }
-    
-
-    
     
     //setShoppingBig(setShoppingBag)
-    //console.log('all content', shoppingBig);
+   //console.log('all content', shoppingBag);
 
     }
-
-
-
-
-
+    
   const askForCameraPermission = () => {
     (async () => {
       const { status } = await BarCodeScanner.requestPermissionsAsync();
@@ -113,15 +107,15 @@ findProduct(data);
       </View>)
   }
   const saveData = async(shoppingBag) => {
-    console.log('just checking:  ', cartarray.push(shoppingBag))
+    //console.log('just checking:  ', shoppingBag.push(cartarray))
+    console.log('2nd cart:>>', shoppingBag)
 
     try {
-      let items = []
-    items = (await AsyncStorage.getItem('items')) || '[]';
-    items = JSON.parse(items);
-    items.push(shoppingBag);
-        await AsyncStorage.setItem('items', JSON.stringify(items))
-        .then(() => console.log('saved cart'))
+        await AsyncStorage.setItem('cart', JSON.stringify(shoppingBag)).then(() =>{
+          alert('Saved successfully.');console.log('saved cart');
+        });
+        
+        //console.log('saved cart'))
     } catch (error) {
         console.log(error)
     }
@@ -159,14 +153,15 @@ findProduct(data);
       </View>
       <Text style={styles.maintext}>{text}</Text>
 
-      {scanned && <Button title={'Scan again?'} onPress={() => setScanned(false)} color='tomato' />}
+      {scanned && <Button title={'Scan again?'} onPress={() =>{ setScanned(false)}} color='tomato' />}
+
+      
       
       <TouchableOpacity ><Text>{'\n'}</Text></TouchableOpacity>
       <Button title={'Add to Cart'} onPress={() => {
         //addItem(shoppingBag); 
         
-       saveData(shoppingBag)
-         ;}} color='green' />
+        saveData(shoppingBag) ;}} color='green' />
 
       
 
