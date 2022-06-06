@@ -24,11 +24,13 @@ export default function Home({navigation}){
   //const cart = useCount(state => state.cart);
   //const addItem = useCount(state => state.addItem);
   const [shoppingBag, setShoppingBag] = useState([]);
-  //const [shoppingBig, setShoppingBig] = useState([]);
-  const [cartarray,setCartarray] = useState([]);
+  const [shoppingBig, setShoppingBig] = useState([]);
+  const [cartarrays,setCartarrays] = useState([]);
   //let cartarray=[];
 
 
+
+  
 
   const findProduct = async (text) => {
     // Build formData object.
@@ -38,7 +40,7 @@ export default function Home({navigation}){
   
     formData.append('FindProduct', text);
     
-    const response = await fetch('http://192.168.3.108/api/Search.php', {
+    const response = await fetch('http://192.168.1.144/api/Search.php', {
     method: "POST",
     body: formData,
     });
@@ -49,29 +51,37 @@ export default function Home({navigation}){
     //addItem(data);
 
     if(data&&data.length>0){
+      setId(data[0].id)
       setName(data[0].prodname)
       setCategory(data[0].category)
       setPrice(data[0].price)
       setQty(data[0].qty)
       setPic(data[0].pic)
       //console.log('fresh bag', shoppingBag)
-
-      cartarray.push(data)
+      cartarrays.push(data)
       
       //ShoppingBag.push(cartarray)
-
-    }
-
-     //cartarray.push(ShoppingBag)
-     
-      //console.log('new cart:>>', cartarray)
       
-      setShoppingBag(cartarray)
-    
-    //setShoppingBig(setShoppingBag)
-   //console.log('all content', shoppingBag);
-
+      
     }
+    
+    
+     //cartarray.push(ShoppingBag)
+      //console.log('new cart:>>', cartarray)
+
+      
+      //setShoppingBag(cartarray);
+      //setShoppingBag(uniqueData);
+    //setShoppingBig(setShoppingBag)
+
+
+    
+    
+
+    
+    
+    }
+    
     
   const askForCameraPermission = () => {
     (async () => {
@@ -96,22 +106,25 @@ findProduct(data);
   if (hasPermission === null) {
     return (
       <View style={styles.container}>
-        <Text>Requesting for camera permission</Text>
+        <Text>Demande d'autorisation de caméra</Text>
       </View>)
   }
   if (hasPermission === false) {
     return (
       <View style={styles.container}>
-        <Text style={{ margin: 10 }}>No access to camera</Text>
+        <Text style={{ margin: 10 }}>Pas d'accès à la caméra</Text>
         <Button title={'Allow Camera'} onPress={() => askForCameraPermission()} />
       </View>)
   }
-  const saveData = async(shoppingBag) => {
-    //console.log('just checking:  ', shoppingBag.push(cartarray))
-    console.log('2nd cart:>>', shoppingBag)
+
+
+  
+
+  const saveData = async(cartarrays) => {
+    console.log('2nd cart:>>', cartarrays);
 
     try {
-        await AsyncStorage.setItem('cart', JSON.stringify(shoppingBag)).then(() =>{
+        await AsyncStorage.setItem('cart', JSON.stringify(cartarrays)).then(() =>{
           alert('Saved successfully.');console.log('saved cart');
         });
         
@@ -158,15 +171,15 @@ findProduct(data);
       
       
       <TouchableOpacity ><Text>{'\n'}</Text></TouchableOpacity>
-      <Button title={'Add to Cart'} onPress={() => {
+      <Button title={'Ajouter au panier'} onPress={() => {
         //addItem(shoppingBag); 
         
-        saveData(shoppingBag) ;}} color='green' />
+        saveData(cartarrays) ;}} color='green' />
 
       
 
       <View style={styles.shadowProp}>
-      <Text style={styles.shadowPropp}>Name: {name}{'\n'}category: {category}{'\n'}Price: {price}${'\n'}qty: {qty}</Text>
+      <Text style={styles.shadowPropp}>Name: {name}{'\n'}category: {category}{'\n'}Price: {price}Dh{'\n'}qty: {qty}</Text>
 
       </View>
       
@@ -182,7 +195,7 @@ findProduct(data);
                     >
                       <Text 
                         style={styles.text}
-                      >Proceed to checkout</Text>
+                      >Passer à le panier</Text>
                     </Pressable>
                   </View>
 

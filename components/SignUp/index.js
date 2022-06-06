@@ -23,15 +23,15 @@ export default class signup extends Component {
     var checkEmail = RegExp(/^[_a-z0-9-]+(\.[_a-z0-9-]+)*@[a-z0-9-]+(\.[a-z0-9-]+)*(\.[a-z]{2,3})$/i);
   
     if ((Email.length==0) || (Password.length==0) || (ConfirmPw.length==0)){
-      alert("Required Field Is Missing!!!");
+      alert("champ obligatoire est manquant !!!");
     }else if (!(checkEmail).test(Email)){
-      alert("invalid email!!!");
+      alert("email invalide!!!");
     }
     // Password validationsnpm
     else if (Password.length<8){
-      alert("Minimum 08 characters required!!!");
+      alert("Minimum 08 characters !!!");
     }else if (!((/[ `!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?~]/).test(Password))){
-      alert("Use atleast 01 special character!!!");
+      alert("Utiliser un 01 special character!!!");
     }else if (((/[ ]/).test(Password))){
       alert("Don't include space in password!!!");
     }else if(Password !== ConfirmPw){
@@ -40,7 +40,7 @@ export default class signup extends Component {
     
     
     else{
-      var InsertAPIURL = "http://192.168.3.106/api/SignIn.php";   //API to render signup
+      var InsertAPIURL = "http://192.168.1.144/api/SignIn.php";   //API to render signup
 
       var headers = {
         'Accept': 'application/json',
@@ -100,7 +100,7 @@ export default class signup extends Component {
       <View style={styles.content}>
         <View style={styles.action}>
         <TextInput
-                placeholder="Enter Email"
+                placeholder="Entrer votre Email"
                 placeholderTextColor="#ffffff"
                 style={styles.textInput}
                 onChangeText={email=>this.setState({email})}
@@ -110,7 +110,7 @@ export default class signup extends Component {
                 <View style={styles.action}>
 
             <TextInput
-                placeholder="Enter Password"
+                placeholder="Entrer votre Password"
                 placeholderTextColor="#ffffff"
                 secureTextEntry={this.state.secureTextEntry ? true : false}
                 style={styles.textInput}
@@ -136,7 +136,7 @@ export default class signup extends Component {
                   </View>
                 <View style={styles.action}>
             <TextInput
-                placeholder="Confirm Password"
+                placeholder="Confirm votre Mot de Pass"
                 placeholderTextColor="#ffffff"
                 style={styles.textInput}
                 onChangeText={confirmPw=>this.setState({confirmPw})}
@@ -171,7 +171,7 @@ export default class signup extends Component {
                     >
                       <Text 
                         style={styles.text}
-                      >Register</Text>
+                      >S'inscrire</Text>
                     </Pressable>
                   </View>
                   </View>

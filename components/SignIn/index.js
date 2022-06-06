@@ -24,9 +24,9 @@ export default class signin extends Component {
     var Password = this.state.password;
 
     if ((Email.length==0) || (Password.length==0)){
-      alert("Required Field Is Missing!!!");
+      alert("champ obligatoire est manquant !!!");
     }else{
-      var APIURL = "http://192.168.3.108/api/login.php";
+      var APIURL = "http://192.168.1.144/api/login.php";
 
       var headers = {
         'Accept' : 'application/json',
@@ -53,7 +53,7 @@ export default class signin extends Component {
         console.log(Data);
       })
       .catch((error)=>{
-        console.error("ERROR FOUND" + error);
+        console.error("ERREUR" + error);
       })
     }
     
@@ -84,7 +84,7 @@ export default class signin extends Component {
       <View style={styles.content}>
           <View style={styles.action}>
             <TextInput
-              placeholder="Enter Email"
+              placeholder="Entrer votre email"
               placeholderTextColor="#ffffff"
               style={styles.textInput}
               onChangeText={email=>this.setState({email})}
@@ -93,7 +93,7 @@ export default class signin extends Component {
 
           <View style={styles.action}>
             <TextInput
-              placeholder="Enter Password"
+              placeholder="Entrer votre mot de pass"
               placeholderTextColor="#ffffff"
               style={styles.textInput}
               secureTextEntry={this.state.secureTextEntry ? true : false}
@@ -127,7 +127,7 @@ export default class signin extends Component {
                       this.InsertRecord()
                     }}
                     >
-                      <Text style={styles.text}>Sign In</Text>
+                      <Text style={styles.text}>S'identifier</Text>
                   </Pressable>
                 </View>
 
@@ -140,7 +140,7 @@ export default class signin extends Component {
                     >
                       <Text 
                         style={styles.text}
-                      >Create new Account</Text>
+                      >Créer un compte</Text>
                     </Pressable>
                   </View>
                   </View>

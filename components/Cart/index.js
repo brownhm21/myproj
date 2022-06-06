@@ -17,17 +17,7 @@ import {
   } from "react-native";
   
   const ListItem = ({ item, setCart, cart }) => {
-	const deleteItem = () => {
-	  Alert.alert("Are You Sure Want To Delete Item ", "Select Below Options", [
-		{ text: "Cancel", onPress: () => 0, style: "cancel" },
-		{
-		  text: "OK",
-		  onPress: () =>
-			// Filter Data and updating data
-			setCart(cart.filter((currentItem) => currentItem != item)),
-		},
-	  ]);
-	};
+	
 	const add = () => {
 	  setCart(
 		cart.map((obj) =>
@@ -49,17 +39,29 @@ import {
 			? {
 				...obj,
 				qty:
-				  cart[cart.findIndex((miniobj) => miniobj.id === obj.id)].qty -
-				  1,
+				  cart[cart.findIndex((miniobj) => miniobj.id === obj.id)].qty-1,
 			  }
 			: obj
 		)
 	  );
 	};
+	
+	const deleteItem = () => {
+		Alert.alert("Are You Sure Want To Delete Item ", "Select Below Options", [
+		  { text: "Cancel", onPress: () => 0, style: "cancel" },
+		  {
+			text: "OK",
+			onPress: () =>
+			  // Filter Data and updating data
+			  setCart(cart.filter((currentItem) => currentItem != item)),
+		  },
+		]);
+	  };
 	return (
+		
 	  <View style={styles.item}>
 		<View style={styles.avatarcon}>
-		<Image source={item.pic}  style ={styles.avatar}/>
+		<Image source={{uri: item.pic}}  style ={styles.avatar}/>
 		</View>
 		<View style={styles.txt}>
 		  <Text style={styles.texto}>{item.prodname}</Text>
@@ -102,6 +104,8 @@ import {
 		  </TouchableOpacity>
 		</View>
 	  </View>
+	  
+	  
 	);
   };
   
@@ -115,7 +119,6 @@ import {
 		  let res = await AsyncStorage.getItem("cart");
 		  setCart([].concat(...JSON.parse(res)));
 		  console.log("Cart", [].concat(...JSON.parse(res)));
-		  //console.log([].concat(...JSON.parse(res)))
 		} catch (err) {
 		  console.log(err);
 		}
@@ -128,10 +131,19 @@ import {
   
 	let totalQuantity = 0;
 	let totalPrice = 0;
-	cart.forEach((item) => {
-	  totalQuantity += item.qty;
-	  totalPrice += item.qty * item.price;
-	});
+
+
+		for (let index = 0; index < cart.length; index++) {
+    
+	totalQuantity +=cart[index].qty;
+	totalPrice +=cart[index].qty* cart[index].price;
+
+
+
+}
+
+
+	  
   
 	itemsSeparator = () => {
 	  return <View style={styles.separator} />;
@@ -139,113 +151,64 @@ import {
   
 	return (
 	  <View>
+		  <View>
 		<SafeAreaView>
-		  <FlatList
-			keyExtractor={(item) => item.id}
-			data={cart}
-			renderItem={({ item, index }) => (
-			  <ListItem
-				item={item}
-				setCart={(newCart) => setCart(newCart)}
-				cart={cart}
-			  />
-			)}
-			ItemSeparatorComponent={itemsSeparator}
-		  />
+		<FlatList
+keyExtractor={(item, index) => "item-"+ index}
+data={[...new Map(cart.map(item =>
+[item['id'], item])).values()]}
+renderItem={({ item, index }) => (
+<ListItem
+item={item}
+setCart={(newCart) => setCart(newCart)}
+cart={cart}
+/>
+)}
+ItemSeparatorComponent={itemsSeparator}
+/>
+		  
 		</SafeAreaView>
-  
-		<View
-		  style={{
-			backgroundColor: "#fff",
-			borderTopWidth: 2,
-			borderColor: "#163b37",
-			paddingVertical: 10,
-			marginTop: 240,
-		  }}
-		>
-		  <View style={{ flexDirection: "row" }}>
-			<View style={[styles.centerElement, { width: 80 }]}>
-			  <View
-				style={[
-				  styles.centerElement,
-				  { width: 32, height: 32, marginLeft: 10 },
-				]}
-			  >
-				<MaterialCommunityIcons name="ticket" size={30} color="#f0ac12" />
-			  </View>
-			</View>
-		  </View>
-		  <View style={{ flexDirection: "row" }}>
-			<View style={[styles.centerElement, { width: 60 }]}>
-			  <TouchableOpacity
-				style={[styles.centerElement, { width: 32, height: 32 }]}
-			  >
-				<Ionicons size={25} />
-			  </TouchableOpacity>
-			</View>
-  
-			<View
-			  style={{
-				flexDirection: "column",
-				flexGrow: 1,
-				flexShrink: 1,
-				justifyContent: "space-between",
-				alignItems: "center",
-				marginLeft: 170,
-			  }}
-			>
-			  <View
-				style={{
-				  flexDirection: "row",
-				  paddingRight: 20,
-				  alignItems: "center",
-				}}
-			  >
-				<Text style={{ color: "#8f8f8f" }}>Total Quantity: </Text>
-				<Text>{totalQuantity}</Text>
-			  </View>
-			  <View
-				style={{
-				  flexDirection: "row",
-				  paddingRight: 20,
-				  alignItems: "center",
-				}}
-			  >
-				<Text style={{ color: "#8f8f8f" }}>SubTotal: </Text>
-				<Text>{totalPrice} DH</Text>
-			  </View>
-			</View>
-		  </View>
-  
-		  <View
-			style={{
-			  flexDirection: "row",
-			  justifyContent: "flex-end",
-			  height: 32,
-			  paddingRight: 20,
-			  alignItems: "center",
-			}}
-		  >
-			<TouchableOpacity
-			  style={[
-				styles.centerElement,
-				{
-				  backgroundColor: "#0faf9a",
-				  width: 100,
-				  height: 25,
-				  borderRadius: 5,
-				  alignItems: "center",
-				},
-			  ]}
-			  onPress={() => console.log("test")}
-			>
-			  <Text style={{ color: "#ffffff", alignItems: "center" }}>
-				Checkout
-			  </Text>
-			</TouchableOpacity>
-		  </View>
 		</View>
+		<View style={{backgroundColor: '#fff', borderTopWidth: 2, borderColor: '#163b37', paddingVertical: 10}}>
+<View style={{flexDirection: 'row'}}>
+    <View style={[styles.centerElement, {width: 80}]}>
+        <View style={[styles.centerElement, {width: 32, height: 32 ,marginLeft: 10,}]}>
+            <MaterialCommunityIcons name="ticket" size={30} color="#f0ac12" />
+        </View>
+    </View>
+    
+</View>
+<View style={{flexDirection: 'row'}}>
+    <View style={[styles.centerElement, {width: 60}]}>
+        <TouchableOpacity style={[styles.centerElement, {width: 32, height: 32}]} >
+            <Ionicons  size={25}  />
+        </TouchableOpacity>
+    </View>
+    
+    <View style={{flexDirection: 'column', flexGrow: 1, flexShrink: 1, justifyContent: 'space-between', alignItems: 'center', marginLeft:170}}>
+    <View style={{flexDirection: 'row', paddingRight: 20, alignItems: 'center'}}>
+            <Text style={{color: '#8f8f8f'}}>Quantité totale: </Text>
+            <Text>{totalQuantity}</Text>
+        </View>
+        <View style={{flexDirection: 'row', paddingRight: 20, alignItems: 'center'}}>
+            <Text style={{color: '#8f8f8f'}}>Total: </Text>
+            <Text>{totalPrice} DH</Text>
+        </View>
+        
+    </View>
+</View>
+
+<View style={{flexDirection: 'row', justifyContent: 'flex-end', height: 32, paddingRight: 20, alignItems: 'center'}}>
+    <TouchableOpacity style={[styles.centerElement, {backgroundColor: '#0faf9a', width: 100, height: 25, borderRadius: 5, alignItems: 'center'}]} onPress={() => console.log('test')}>
+        <Text style={{color: '#ffffff', alignItems: 'center'}}>Payer</Text>
+    </TouchableOpacity>
+</View>
+</View>
+
+		
 	  </View>
+	  
+	  
 	);
   }
   const styles = StyleSheet.create({
